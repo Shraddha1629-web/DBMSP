@@ -1,0 +1,173 @@
+VIEW  OPERATION :
+Microsoft Windows [Version 10.0.22631.5189]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\SAINATH>mysql -h localhost -u root -p
+Enter password: *************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 23
+Server version: 8.0.42 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> use inventry;
+Database changed
+mysql> desc sale;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| sid   | int  | YES  |     | NULL    |       |
+| pid   | int  | YES  | MUL | NULL    |       |
+| qty   | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
+3 rows in set (0.02 sec)
+
+mysql> desc supplier;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| supid      | int         | NO   | PRI | NULL    |       |
+| supname    | varchar(20) | YES  |     | NULL    |       |
+| supaddress | varchar(20) | YES  |     | NULL    |       |
+| email      | varchar(40) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc product;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| pid   | int         | NO   | PRI | NULL    |       |
+| pname | varchar(20) | YES  |     | NULL    |       |
+| price | float       | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> create view v3 as select product.pid,pname,qty,price from product,sales where product.pid=sales.pid;
+ERROR 1146 (42S02): Table 'inventry.sales' doesn't exist
+mysql> create view v3 as select product.pid,pname,qty,price from product,sale where product.pid=sale.pid;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into v3 values('100',milk,1,320);
+ERROR 1394 (HY000): Can not insert into join view 'inventry.v3' without fields list
+mysql> create view v3 as select product.pid,pname,qty,price from product,sale where product.pid=sale.pid;
+ERROR 1050 (42S01): Table 'v3' already exists
+mysql> create view v1 as select product.pid,pname,qty,price from product,sale where product.pid=sale.pid;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create view v2 as select product.pid,pname,qty,price from product,sale where product.pid=sale.pid;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> drop view v3;
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> drop view v2;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> drop view v1;
+Query OK, 0 rows affected (0.03 sec)
+INDEX OPERATION :
+mysql> create index X on product(pid,pname);
+Query OK, 0 rows affected (0.07 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> desc product;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| pid   | int         | NO   | PRI | NULL    |       |
+| pname | varchar(20) | YES  |     | NULL    |       |
+| price | float       | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql>  INSERT INTO product VALUES (99, 'MILK', 350);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> SELECT * FROM product;
++-----+-------+-------+
+| pid | pname | price |
++-----+-------+-------+
+|  99 | MILK  |   350 |
+| 101 | NULL  |  NULL |
+| 104 | NULL  |  NULL |
++-----+-------+-------+
+3 rows in set (0.00 sec)
+
+mysql>  INSERT INTO product VALUES (101, 'Salt', 500);
+ERROR 1062 (23000): Duplicate entry '101' for key 'product.PRIMARY'
+mysql>  INSERT INTO product VALUES (104, 'Salt', 500);
+ERROR 1062 (23000): Duplicate entry '104' for key 'product.PRIMARY'
+mysql>  INSERT INTO product VALUES (1045, 'Salt', 500);
+Query OK, 1 row affected (0.03 sec)
+
+mysql>  INSERT INTO product VALUES (145, 'Sugar', 50);
+Query OK, 1 row affected (0.03 sec)
+
+mysql> SELECT * FROM product;
++------+-------+-------+
+| pid  | pname | price |
++------+-------+-------+
+|   99 | MILK  |   350 |
+|  101 | NULL  |  NULL |
+|  104 | NULL  |  NULL |
+|  145 | Sugar |    50 |
+| 1045 | Salt  |   500 |
++------+-------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SHOW INDEX FROM product;
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| Table   | Non_unique | Key_name | Seq_in_index | Column_name | Collation | Cardinality | Sub_part | Packed | Null | Index_type | Comment | Index_comment | Visible | Expression |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+| product |          0 | PRIMARY  |            1 | pid         | A         |           4 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| product |          1 | X        |            1 | pid         | A         |           4 |     NULL |   NULL |      | BTREE      |         |               | YES     | NULL       |
+| product |          1 | X        |            2 | pname       | A         |           4 |     NULL |   NULL | YES  | BTREE      |         |               | YES     | NULL       |
++---------+------------+----------+--------------+-------------+-----------+-------------+----------+--------+------+------------+---------+---------------+---------+------------+
+3 rows in set (0.04 sec)
+
+mysql> mysql> select * from product where price between 100 AND 499;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'mysql> select * from product where price between 100 AND 499' at line 1
+mysql> select * from product where price between 100 AND 499;
++-----+-------+-------+
+| pid | pname | price |
++-----+-------+-------+
+|  99 | MILK  |   350 |
++-----+-------+-------+
+1 row in set (0.00 sec)
+
+mysql> select pname from product where pname like 'm%';
++-------+
+| pname |
++-------+
+| MILK  |
++-------+
+1 row in set (0.02 sec)
+
+mysql>  select pname from product where pname like '%s';
+Empty set (0.00 sec)
+
+mysql>  select pname from product where pname like '%r';
++-------+
+| pname |
++-------+
+| Sugar |
++-------+
+1 row in set (0.00 sec)
+
+mysql> select pname from product where pname like '%a%';
++-------+
+| pname |
++-------+
+| Sugar |
+| Salt  |
++-------+
+2 rows in set (0.00 sec)
+
+mysql>
