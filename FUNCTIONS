@@ -1,0 +1,408 @@
+o	NUMERIC OPERATION :
+Microsoft Windows [Version 10.0.22631.5189]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\SAINATH> mysql -h localhost -u root -p
+Enter password: *************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.42 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> SELECT ABS(-25) AS AbsoluteValue;
++---------------+
+| AbsoluteValue |
++---------------+
+|            25 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CEIL(10.2) AS RoundedUp;
++-----------+
+| RoundedUp |
++-----------+
+|        11 |
++-----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT FLOOR(10.8) AS RoundedDown;
++-------------+
+| RoundedDown |
++-------------+
+|          10 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT ROUND(123.4567, 2) AS RoundedTo2Decimal;
++-------------------+
+| RoundedTo2Decimal |
++-------------------+
+|            123.46 |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT POWER(2, 3) AS TwoPowerThree;
++---------------+
+| TwoPowerThree |
++---------------+
+|             8 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT SQRT(144) AS SquareRoot;
++------------+
+| SquareRoot |
++------------+
+|         12 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MOD(10, 3) AS Remainder;
++-----------+
+| Remainder |
++-----------+
+|         1 |
++-----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT SIGN(-20) AS SignValue;
++-----------+
+| SignValue |
++-----------+
+|        -1 |
++-----------+
+1 row in set (0.00 sec)
+
+o	AGGREGATION FUNCTION :
+
+mysql> use inventry;
+Database changed
+mysql> desc sale;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| sid   | int  | YES  |     | NULL    |       |
+| pid   | int  | YES  | MUL | NULL    |       |
+| qty   | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> desc supplier;
++------------+-------------+------+-----+---------+-------+
+| Field      | Type        | Null | Key | Default | Extra |
++------------+-------------+------+-----+---------+-------+
+| supid      | int         | NO   | PRI | NULL    |       |
+| supname    | varchar(20) | YES  |     | NULL    |       |
+| supaddress | varchar(20) | YES  |     | NULL    |       |
+| email      | varchar(40) | YES  |     | NULL    |       |
++------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> desc product;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| pid   | int         | NO   | PRI | NULL    |       |
+| pname | varchar(20) | YES  |     | NULL    |       |
+| price | float       | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> select*from product;
++------+-------+-------+
+| pid  | pname | price |
++------+-------+-------+
+|   99 | MILK  |   350 |
+|  101 | NULL  |  NULL |
+|  104 | NULL  |  NULL |
+|  145 | Sugar |    50 |
+| 1045 | Salt  |   500 |
++------+-------+-------+
+5 rows in set (0.01 sec)
+mysql> update product set pname='oil' where pid=101;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update product set price=140 where pid=101;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update product set pname='Poha' where pid=104;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> update product set price=50 where pid=104;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select*from product;
++------+-------+-------+
+| pid  | pname | price |
++------+-------+-------+
+|   99 | MILK  |   350 |
+|  101 | oil   |   140 |
+|  104 | Poha  |    50 |
+|  145 | Sugar |    50 |
+| 1045 | Salt  |   500 |
++------+-------+-------+
+5 rows in set (0.00 sec)
+mysql> SELECT SUM(price) AS total_price FROM product;
++-------------+
+| total_price |
++-------------+
+|        1090 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT AVG(price) AS average_price from product;
++---------------+
+| average_price |
++---------------+
+|           218 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MIN(price) AS lowest_price from product;
++--------------+
+| lowest_price |
++--------------+
+|           50 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MAX(price) AS highest_price from product;
++---------------+
+| highest_price |
++---------------+
+|           500 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS total_products from product;
++----------------+
+| total_products |
++----------------+
+|              5 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT price, COUNT(*) AS count_of_same_pricet from product GROUP BY price;
++-------+----------------------+
+| price | count_of_same_pricet |
++-------+----------------------+
+|   350 |                    1 |
+|   140 |                    1 |
+|    50 |                    2 |
+|   500 |                    1 |
++-------+----------------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT* from product WHERE price > (SELECT AVG(price) FROM product);
++------+-------+-------+
+| pid  | pname | price |
++------+-------+-------+
+|   99 | MILK  |   350 |
+| 1045 | Salt  |   500 |
++------+-------+-------+
+2 rows in set (0.00 sec)
+
+o	STRING OPERATION :
+mysql> SELECT pname, UPPER(pname) AS upper_name FROM product;
++-------+------------+
+| pname | upper_name |
++-------+------------+
+| MILK  | MILK       |
+| oil   | OIL        |
+| Poha  | POHA       |
+| Sugar | SUGAR      |
+| Salt  | SALT       |
++-------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT pname, LOWER(pname) AS lower_name FROM product;
++-------+------------+
+| pname | lower_name |
++-------+------------+
+| MILK  | milk       |
+| oil   | oil        |
+| Poha  | poha       |
+| Sugar | sugar      |
+| Salt  | salt       |
++-------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT pname, LENGTH(pname) AS name_length FROM product;
++-------+-------------+
+| pname | name_length |
++-------+-------------+
+| MILK  |           4 |
+| oil   |           3 |
+| Poha  |           4 |
+| Sugar |           5 |
+| Salt  |           4 |
++-------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT pname, CHAR_LENGTH(pname) AS char_count FROM product;
++-------+------------+
+| pname | char_count |
++-------+------------+
+| MILK  |          4 |
+| oil   |          3 |
+| Poha  |          4 |
+| Sugar |          5 |
+| Salt  |          4 |
++-------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT CONCAT(pname, ' - Rs.', price) AS product_info FROM product;
++---------------+
+| product_info  |
++---------------+
+| MILK - Rs.350 |
+| oil - Rs.140  |
+| Poha - Rs.50  |
+| Sugar - Rs.50 |
+| Salt - Rs.500 |
++---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT pname, SUBSTRING(pname, 1, 3) AS short_name FROM product;
++-------+------------+
+| pname | short_name |
++-------+------------+
+| MILK  | MIL        |
+| oil   | oil        |
+| Poha  | Poh        |
+| Sugar | Sug        |
+| Salt  | Sal        |
++-------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT pname, REPLACE(pname, 'a', '@') AS modified_name FROM product;
++-------+---------------+
+| pname | modified_name |
++-------+---------------+
+| MILK  | MILK          |
+| oil   | oil           |
+| Poha  | Poh@          |
+| Sugar | Sug@r         |
+| Salt  | S@lt          |
++-------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT TRIM('  Salt  ') AS trimmed_text;
++--------------+
+| trimmed_text |
++--------------+
+| Salt         |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT pname, LEFT(pname, 2) AS first_two, RIGHT(pname, 2) AS last_two FROM product;
++-------+-----------+----------+
+| pname | first_two | last_two |
++-------+-----------+----------+
+| MILK  | MI        | LK       |
+| oil   | oi        | il       |
+| Poha  | Po        | ha       |
+| Sugar | Su        | ar       |
+| Salt  | Sa        | lt       |
++-------+-----------+----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT pname, INSTR(pname, 'a') AS position_of_a FROM product;
++-------+---------------+
+| pname | position_of_a |
++-------+---------------+
+| MILK  |             0 |
+| oil   |             0 |
+| Poha  |             4 |
+| Sugar |             4 |
+| Salt  |             2 |
++-------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM product WHERE pname LIKE 'S%';
++------+-------+-------+
+| pid  | pname | price |
++------+-------+-------+
+|  145 | Sugar |    50 |
+| 1045 | Salt  |   500 |
++------+-------+-------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM product WHERE pname LIKE '%a%';
++------+-------+-------+
+| pid  | pname | price |
++------+-------+-------+
+|  104 | Poha  |    50 |
+|  145 | Sugar |    50 |
+| 1045 | Salt  |   500 |
++------+-------+-------+
+3 rows in set (0.00 sec)
+
+
+o	DATE FUNCTION :
+mysql> SELECT CURRENT_DATE() AS today;
++------------+
+| today      |
++------------+
+| 2025-07-29 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT NOW() AS current_datetime;
++---------------------+
+| current_datetime    |
++---------------------+
+| 2025-07-29 12:42:38 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CURDATE() AS today_date, CURTIME() AS now_time;
++------------+----------+
+| today_date | now_time |
++------------+----------+
+| 2025-07-29 | 12:43:44 |
++------------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT DATE(NOW()) AS only_date;
++------------+
+| only_date  |
++------------+
+| 2025-07-29 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT LAST_DAY(CURDATE()) AS last_day_of_month;
++-------------------+
+| last_day_of_month |
++-------------------+
+| 2025-07-31        |
++-------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT WEEKDAY('2025-07-29') AS weekday_number;
++----------------+
+| weekday_number |
++----------------+
+|              1 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT STR_TO_DATE('29-07-2025', '%d-%m-%Y') AS formatted_date;
++----------------+
+| formatted_date |
++----------------+
+| 2025-07-29     |
++----------------+
+1 row in set (0.00 sec)
