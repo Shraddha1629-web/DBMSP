@@ -1,0 +1,115 @@
+Microsoft Windows [Version 10.0.22631.5335]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\SAINATH>mysql -h localhost -u root -p
+Enter password: *************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 10
+Server version: 8.0.42 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2025, Oracle and/or its affiliates.
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+	Customers who made a purchase with amount > average
+mysql> use inventry;
+Database changed
+mysql> desc sale;
++-------+------+------+-----+---------+-------+
+| Field | Type | Null | Key | Default | Extra |
++-------+------+------+-----+---------+-------+
+| sid   | int  | YES  |     | NULL    |       |
+| pid   | int  | YES  | MUL | NULL    |       |
+| qty   | int  | YES  |     | NULL    |       |
++-------+------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> select * from sale;
++------+------+------+
+| sid  | pid  | qty  |
++------+------+------+
+|  100 |  104 | NULL |
+|  100 |   99 |   10 |
+|  111 |  101 |  100 |
+|  112 |  104 |   50 |
++------+------+------+
+4 rows in set (0.01 sec)
+
+mysql> desc product;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| pid      | int         | NO   | PRI | NULL    |       |
+| pname    | varchar(20) | YES  |     | NULL    |       |
+| price    | float       | YES  |     | NULL    |       |
+| category | varchar(20) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> select * from product;
++------+-------+-------+----------+
+| pid  | pname | price | category |
++------+-------+-------+----------+
+|   99 | MILK  |   350 | Dairy    |
+|  101 | oil   |   140 | Soyabin  |
+|  104 | Poha  |    50 | Rice     |
+|  145 | Sugar |    50 | Store    |
+| 1045 | Salt  |   500 | White    |
++------+-------+-------+----------+
+5 rows in set (0.01 sec)
+
+mysql> select * from supplier;
++-------+---------+------------+------------------+
+| supid | supname | supaddress | email            |
++-------+---------+------------+------------------+
+|     1 | Sharad  | Pune       | sharad@gmail.com |
+|  1000 | Rajesh  | Patna      | rajesh@gmail.com |
+|   101 | Sairaj  | shirdi     | sai@gmail.com    |
+|   102 | Ram     | yeola      | ram@gmail.com    |
+|   103 | Raj     | nashik     | raj@gmail.com    |
+|   104 | Saad    | nigadi     | saad@gmail.com   |
++-------+---------+------------+------------------+
+6 rows in set (0.04 sec)
+
+mysql> select * from purchase;
++------+------+------+--------+------------+
+| puid | pid  | qty  | amount | saledate   |
++------+------+------+--------+------------+
+|  101 |   99 |    5 |   1000 | 2025-04-29 |
+|  102 |  101 |    6 |  10000 | 2025-04-28 |
+|  103 |  104 |   10 |   2000 | 2025-05-27 |
++------+------+------+--------+------------+
+3 rows in set (0.01 sec)
+
+mysql> select * from customer;
++-----+----------+------------------+
+| cid | cname    | address          |
++-----+----------+------------------+
+| 101 | Shraddha | Pimpalgaon Jalal |
+| 102 | Shraa    | Nategaon         |
+| 103 | Shree    | Nandur           |
+| 104 | Diksha   | Nandurbar        |
++-----+----------+------------------+
+4 rows in set (0.01 sec)
+
+	Products that have never been sold :
+mysql> select pid from purchase where amount>(select AVG(amount) from purchase);
++------+
+| pid  |
++------+
+|  101 |
++------+
+1 row in set (0.00 sec)
+
+mysql> select pid,pname from product where pid NOT IN (SELECT pid from sale);
++------+-------+
+| pid  | pname |
++------+-------+
+|  145 | Sugar |
+| 1045 | Salt  |
++------+-------+
+2 rows in set (0.00 sec)
+
+mysql>
